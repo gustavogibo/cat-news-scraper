@@ -1,0 +1,11 @@
+.paral {
+    min-height: 600px;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: 50% 50%;
+}
+
+.paralse-1 {
+    background-image: url("../img/img-22.png");
+}
+    
