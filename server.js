@@ -1,3 +1,5 @@
+var PORT = process.env.PORT || 3000;
+
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
@@ -19,17 +21,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/catscrap";
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI);
-
-
-// var db = require("./models");
-
-var PORT = 3000;
 
 var routes = require("./controllers/indexController.js");
 
