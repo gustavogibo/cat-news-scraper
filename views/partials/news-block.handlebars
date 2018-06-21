@@ -6,7 +6,7 @@
         <div class="card-body">
             <h5 class="card-title">{{this.title}}</h5>
             <p class="card-text">What a title! See the entire news <a href="{{this.link}}" target="blank"> here!</a></p>
-            <a href="#" class="btn btn-primary">Read Notes / Write a new Note</a>
+            <a href="#" data-id="{{this._id}}" class="btn btn-primary btn-note">Read Notes / Write a new Note</a>
             {{#if this.saved}}
             <a href="#" class="btn btn-danger bt-toggle-article" data-id="{{this._id}}" data-value="false">Unsave Article</a>
             {{else}}

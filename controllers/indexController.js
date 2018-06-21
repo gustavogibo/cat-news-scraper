@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var mongoose = require("mongoose");
+// var mongoose = require("mongoose");
 var axios = require("axios");
 var cheerio = require("cheerio");
 
@@ -19,6 +19,14 @@ router.get("/", function (req, res) {
 
 // A GET route for scraping the echoJS website
 router.get("/scrape", function(req, res) {
+
+  var oldNumber = 0;
+  var newNumber = 0;
+
+  db.Article.count({}, function(err , count){
+    
+    oldNumber = count;
+  });
 
   var result = [];
 
@@ -51,8 +59,9 @@ router.get("/scrape", function(req, res) {
     db.Article.create(result)
     .then(function(dbArticle) {
 
+      console.log("yay");
       if(dbArticle) {
-
+        consol.log(dbArticle)
         res.send(dbArticle.length);  
 
       } else {
@@ -65,9 +74,20 @@ router.get("/scrape", function(req, res) {
     })
     .catch(function(err) {
       // If an error occurred, send it to the client
-      res.send('0');
+      console.log(err);
+      
+      db.Article.count({}, function(err , count){
+        newNumber = count;
+        
+      });
+
+      res.send("success");
+      
     });
 
+    
+
+    // res.send(0);
     // If we were able to successfully scrape and save an Article, send a message to the client
     // res.send("scraped!");
   });
@@ -159,6 +179,21 @@ router.post("/articles/:id", function(req, res) {
   // save the new note that gets posted to the Notes collection
   // then find an article from the req.params.id
   // and update it's "note" property with the _id of the new note
+});
+
+router.get("/notes/:id", function (req, res) {
+
+  db.Article.findById(req.params.id).populate("note").then(function (result) {
+
+    console.log(result);
+    
+    res.json(result);
+
+  }).catch(function(error) {
+
+    res.json(error);
+  });
+
 });
 
 // Export routes for server.js to use.
