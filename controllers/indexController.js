@@ -15,7 +15,7 @@ router.get("/", function (req, res) {
 
   })
 
-})
+});
 
 // A GET route for scraping the echoJS website
 router.get("/scrape", function(req, res) {
@@ -54,6 +54,35 @@ router.get("/scrape", function(req, res) {
     res.send("Scrape Complete");
   });
 });
+
+router.get("/saved", function (req, res) {
+
+  db.Article.find({where: {saved: true}}).then(function (articles) {
+
+    res.render("index", {articles: articles});
+
+  })
+
+});
+
+// Route for saving/updating an Article's associated Note
+router.post("/api/togglearticle", function(req, res) {
+
+  console.log(req.body);
+
+  db.Article.findById(req.body.id, function (err, article) {
+    if (err) return handleError(err);
+
+    console.log(req.body);
+  
+    article.saved = req.body.val;
+    article.save(function (err, updatedArticle) {
+      if (err) return handleError(err);
+      res.send(updatedArticle);
+    });
+  });
+
+});
   
 // Route for getting all Articles from the db
 router.get("/articles", function(req, res) {
@@ -85,6 +114,7 @@ router.get("/articles/:id", function(req, res) {
   // and run the populate method with "note",
   // then responds with the article with the note included
 });
+
   
 // Route for saving/updating an Article's associated Note
 router.post("/articles/:id", function(req, res) {
