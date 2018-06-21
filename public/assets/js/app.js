@@ -1,7 +1,20 @@
 $(document).ready(function() {
 
     $(".scrape-data").on("click", function() {
-        
+        swal.showLoading({title: 'Looking for Mew Mew articles'});
+        $.ajax({
+            method:"GET",
+            url: "/scrape"
+        }).then(function (data) {
+
+            swal(
+                'Scraping complete',
+                `${data} new articles`,
+                'success'
+            );
+
+        })
+
     });
 
     $(".bt-toggle-article").on("click", function (event) {

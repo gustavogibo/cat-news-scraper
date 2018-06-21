@@ -19,6 +19,9 @@ router.get("/", function (req, res) {
 
 // A GET route for scraping the echoJS website
 router.get("/scrape", function(req, res) {
+
+  var result = [];
+
   // First, we grab the body of the html with request
   axios.get("http://www.lifewithcats.tv/").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
@@ -27,39 +30,56 @@ router.get("/scrape", function(req, res) {
     // Now, we grab every h2 within an article tag, and do the following:
     $("article.format-standard").each(function(i, element) {
       // Save an empty result object
-      var result = {};
 
-      result.link = $(element).find(".alignnone").attr("href");
+      var single = {};
 
-      if (result.link == undefined) {
+      single.link = $(element).find(".alignnone").attr("href");
 
-        result.link = $(element).find(".aligncenter").attr("href");
+      if (single.link == undefined) {
+
+        single.link = $(element).find(".aligncenter").attr("href");
 
       }
-      result.title = $(element).find(".entry-title").find("a").text();
+      single.title = $(element).find(".entry-title").find("a").text();
 
-      // Create a new Article using the `result` object built from scraping
-      db.Article.create(result)
-        .then(function(dbArticle) {
-          // View the added result in the console
-          console.log(dbArticle);
-        })
-        .catch(function(err) {
-          // If an error occurred, send it to the client
-          return res.json(err);
-        });
+      result.push(single);
+
+
+    });
+
+    // Create a new Article using the `result` object built from scraping
+    db.Article.create(result)
+    .then(function(dbArticle) {
+
+      if(dbArticle) {
+
+        res.send(dbArticle.length);  
+
+      } else {
+
+        res.send("0");
+
+      }
+      // View the added result in the console
+      
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.send('0');
     });
 
     // If we were able to successfully scrape and save an Article, send a message to the client
-    res.send("Scrape Complete");
+    // res.send("scraped!");
   });
 });
 
 router.get("/saved", function (req, res) {
 
-  db.Article.find({where: {saved: true}}).then(function (articles) {
+  db.Article.find({saved: true}).then(function (articles) {
 
-    res.render("index", {articles: articles});
+    console.log(articles);
+
+    res.render("saved", {articles: articles});
 
   })
 
